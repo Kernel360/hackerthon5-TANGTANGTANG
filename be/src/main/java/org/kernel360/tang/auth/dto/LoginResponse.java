@@ -1,10 +1,10 @@
 package org.kernel360.tang.auth.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LoginResponse {
-    private String username;
+    private final String username;
 }

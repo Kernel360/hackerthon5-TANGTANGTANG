@@ -1,13 +1,13 @@
 package org.kernel360.tang.auth;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.kernel360.tang.auth.dto.LoginRequest;
 import org.kernel360.tang.member.Member;
 import org.kernel360.tang.member.MemberMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class AuthService {
     private final MemberMapper memberMapper;

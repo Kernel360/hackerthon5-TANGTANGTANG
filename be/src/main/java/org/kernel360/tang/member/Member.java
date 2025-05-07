@@ -1,12 +1,12 @@
 package org.kernel360.tang.member;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Member {
-    private Long memberId;
-    private String username;
-    private String password;
+    private final Long memberId;
+    private final String username;
+    private final String password;
 }

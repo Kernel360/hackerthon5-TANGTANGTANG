@@ -1,1 +1,7 @@
-spring.application.name=tang
+spring:
+  application:
+    name: tang
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml  # 매퍼 파일 경로
+  type-aliases-package: org.kernel360.tang.model     # 모델 클래스 경로

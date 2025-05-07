@@ -13,11 +13,7 @@ public class AppExceptionAdvice {
         var code = e.getCode();
         var body = AppErrorResponse.from(code);
 
-        if (e.getCode().shouldBeLogged()) {
-            log.error("AppException: ", e);
-        } else {
-            log.debug("AppException: ", e);
-        }
+        doLogging(code);
 
         return ResponseEntity
                 .status(code.getHttpStatusCode())
@@ -29,14 +25,24 @@ public class AppExceptionAdvice {
         var code = CommonExceptionCode.INTERNAL_SERVER_ERROR;
         var body = AppErrorResponse.from(code);
 
-        if (code.shouldBeLogged()) {
-            log.error("InternalError: ", e);
-        } else {
-            log.debug("InternalError: ", e);
-        }
+        doLogging(code);
 
         return ResponseEntity
                 .status(code.getHttpStatusCode())
                 .body(body);
+    }
+
+    private void doLogging(ExceptionCode code) {
+        switch (code.getLoggingLevel()) {
+            case DEBUG -> {
+                log.debug(code.getMessage());
+            }
+            case APP_WARN -> {
+                log.warn(code.getMessage());
+            }
+            case APP_ERROR, INTERNAL_ERROR -> {
+                log.error(code.getMessage());
+            }
+        }
     }
 }

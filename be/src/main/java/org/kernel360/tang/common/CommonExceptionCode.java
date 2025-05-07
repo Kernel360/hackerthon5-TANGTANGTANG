@@ -13,7 +13,7 @@ public enum CommonExceptionCode implements ExceptionCode {
     private final String code;
     private final String message;
     private final HttpStatus httpStatusCode;
-    private final boolean shouldBeLogged;
+    private final LoggingLevel loggingLevel;
 
     @Override
     public String getPrefix() {
@@ -24,6 +24,6 @@ public enum CommonExceptionCode implements ExceptionCode {
         this.code = code;
         this.message = message;
         this.httpStatusCode = httpStatusCode;
-        this.shouldBeLogged = true;
+        this.loggingLevel = LoggingLevel.INTERNAL_ERROR;
     }
 }

@@ -15,7 +15,5 @@ public interface ExceptionCode {
 
     HttpStatusCode getHttpStatusCode();
 
-    default boolean shouldBeLogged() {
-        return false;
-    }
+    LoggingLevel getLoggingLevel();
 }

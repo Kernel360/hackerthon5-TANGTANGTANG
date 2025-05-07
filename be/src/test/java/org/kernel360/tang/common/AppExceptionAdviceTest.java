@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -15,7 +14,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,21 +39,21 @@ public class AppExceptionAdviceTest {
     @Test
     @DisplayName("상태코드가 ExceptionCode의 HttpStatusCode와 같아야 한다")
     void testHttpStatusCode() throws Exception {
-        mvc.perform(get("/test"))
+        mvc.perform(get("/test-app-warn"))
                 .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
     }
 
     @Test
     @DisplayName("$.error.code에 PREFIX를 포함한 예외 코드가 포함되어야 한다")
     void testErrorCode() throws Exception {
-        mvc.perform(get("/test"))
+        mvc.perform(get("/test-app-warn"))
                 .andExpect(jsonPath("$.error.code").value("TEST001"));
     }
 
     @Test
     @DisplayName("$.error.message에 예외 메시지가 포함되어야 한다")
     void testErrorMessage() throws Exception {
-        mvc.perform(get("/test"))
+        mvc.perform(get("/test-app-warn"))
                 .andExpect(jsonPath("$.error.message").value("test exception"));
     }
 
@@ -66,27 +64,9 @@ public class AppExceptionAdviceTest {
                 .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()));
     }
 
-    @Test
-    @DisplayName("로깅 옵션이 true인 경우 반드시 로그를 남겨야 한다")
-    void testLoggingOptionTrue(CapturedOutput output) throws Exception {
-        mvc.perform(get("/test-with-logging"))
-                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
-
-        assertThat(output).contains("test exception");
-    }
-
-    @Test
-    @DisplayName("로깅 옵션이 false인 경우 로그를 남기지 않아야 한다")
-    void testLoggingOptionFalse(CapturedOutput output) throws Exception {
-        mvc.perform(get("/test"))
-                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
-
-        assertThat(output).doesNotContain("test exception");
-    }
-
     @RestController
     public static class TestController {
-        @GetMapping("/test")
+        @GetMapping("/test-app-warn")
         public void test() {
             ExceptionCode code = new ExceptionCode() {
 
@@ -111,16 +91,15 @@ public class AppExceptionAdviceTest {
                 }
 
                 @Override
-                @SuppressWarnings("RedundantMethodOverride")
-                public boolean shouldBeLogged() {
-                    return false;
+                public LoggingLevel getLoggingLevel() {
+                    return LoggingLevel.APP_WARN;
                 }
             };
 
             throw new AppException(code);
         }
 
-        @GetMapping("/test-with-logging")
+        @GetMapping("/test-app-error")
         public void testWithLogging() {
             ExceptionCode code = new ExceptionCode() {
 
@@ -145,8 +124,8 @@ public class AppExceptionAdviceTest {
                 }
 
                 @Override
-                public boolean shouldBeLogged() {
-                    return true;
+                public LoggingLevel getLoggingLevel() {
+                    return LoggingLevel.APP_ERROR;
                 }
             };
 

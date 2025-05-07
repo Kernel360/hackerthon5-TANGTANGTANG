@@ -26,10 +26,15 @@ public class AppExceptionAdvice {
 
     @ExceptionHandler
     public ResponseEntity<AppErrorResponse> handleException(Exception e) {
-        log.error("InternalError: ", e);
-
         var code = CommonExceptionCode.INTERNAL_SERVER_ERROR;
         var body = AppErrorResponse.from(code);
+
+        if (code.shouldBeLogged()) {
+            log.error("InternalError: ", e);
+        } else {
+            log.debug("InternalError: ", e);
+        }
+
         return ResponseEntity
                 .status(code.getHttpStatusCode())
                 .body(body);

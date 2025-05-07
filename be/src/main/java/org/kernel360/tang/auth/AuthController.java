@@ -25,7 +25,6 @@ public class AuthController {
         try {
             Member member = authService.login(request);
             session.setAttribute("memberId", member.getMemberId());
-            session.setAttribute("username", member.getUsername());
 
             LoginResponse loginResponse = new LoginResponse(member.getUsername());
             return ResponseEntity.ok(loginResponse);

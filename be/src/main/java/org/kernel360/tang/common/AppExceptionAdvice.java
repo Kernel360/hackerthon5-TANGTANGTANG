@@ -14,7 +14,7 @@ public class AppExceptionAdvice {
         var code = e.getCode();
         var body = AppErrorResponse.from(code);
 
-        doLogging(code);
+        doLogging(e, code);
 
         return ResponseEntity
                 .status(code.getHttpStatusCode())
@@ -26,7 +26,7 @@ public class AppExceptionAdvice {
         var code = CommonExceptionCode.NOT_FOUND;
         var body = AppErrorResponse.from(code);
 
-        doLogging(code);
+        doLogging(e, code);
 
         return ResponseEntity
                 .status(code.getHttpStatusCode())
@@ -38,23 +38,25 @@ public class AppExceptionAdvice {
         var code = CommonExceptionCode.INTERNAL_SERVER_ERROR;
         var body = AppErrorResponse.from(code);
 
-        doLogging(code);
+        doLogging(e, code);
 
         return ResponseEntity
                 .status(code.getHttpStatusCode())
                 .body(body);
     }
 
-    private void doLogging(ExceptionCode code) {
+    private void doLogging(Exception e, ExceptionCode code) {
         switch (code.getLoggingLevel()) {
             case DEBUG -> {
                 log.debug(code.getMessage());
+                log.debug("Stack trace: ", e);
             }
             case APP_WARN -> {
                 log.warn(code.getMessage());
             }
             case APP_ERROR, INTERNAL_ERROR -> {
                 log.error(code.getMessage());
+                log.error("Stack trace: ", e);
             }
         }
     }

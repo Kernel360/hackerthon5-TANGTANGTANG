@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -58,10 +60,28 @@ public class AppExceptionAdviceTest {
     }
 
     @Test
+    @DisplayName("로그 레벨이 ERROR인 경우 표준 출력에 StackTrace가 포함되어야 한다")
+    void testErrorLoggingWithStackTrace(CapturedOutput output) throws Exception {
+        mvc.perform(get("/test-app-error"))
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+
+        assertThat(output).contains("org.kernel360.tang.common.AppException: test exception");
+    }
+
+    @Test
     @DisplayName("알 수 없는 예외 발생 시 500 에러가 발생해야 한다")
     void testUnknownException() throws Exception {
         mvc.perform(get("/test-internal"))
                 .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+    }
+
+    @Test
+    @DisplayName("알 수 없는 예외 발생 시 표준 출력에 StackTrace가 포함되어야 한다")
+    void testUnknownExceptionWithStackTrace(CapturedOutput output) throws Exception {
+        mvc.perform(get("/test-internal"))
+                .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+
+        assertThat(output).contains("java.lang.RuntimeException: test exception");
     }
 
     @Test

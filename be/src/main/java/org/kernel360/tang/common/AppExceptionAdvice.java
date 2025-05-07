@@ -26,7 +26,7 @@ public class AppExceptionAdvice {
 
     @ExceptionHandler
     public ResponseEntity<AppErrorResponse> handleException(Exception e) {
-        log.error("Internal server error occurred", e);
+        log.error("InternalError: ", e);
 
         var code = CommonExceptionCode.INTERNAL_SERVER_ERROR;
         var body = AppErrorResponse.from(code);

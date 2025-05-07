@@ -4,17 +4,18 @@ import lombok.AllArgsConstructor;
 import org.kernel360.tang.auth.dto.LoginRequest;
 import org.kernel360.tang.member.Member;
 import org.kernel360.tang.member.MemberMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
 public class AuthService {
     private final MemberMapper memberMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public Member login(LoginRequest request) {
         Member member = memberMapper.selectMemberByUsername(request.getUsername());
-        // TODO: 비밀번호 검증 기능 추가 필요
-        if (member == null) {
+        if (member == null || !passwordEncoder.matches(request.getPassword(), member.getPassword())) {
             throw new RuntimeException("로그인 정보가 올바르지 않습니다.");
         }
         return member;

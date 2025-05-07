@@ -14,4 +14,8 @@ public interface ExceptionCode {
     String getMessage();
 
     HttpStatusCode getHttpStatusCode();
+
+    default boolean shouldBeLogged() {
+        return false;
+    }
 }

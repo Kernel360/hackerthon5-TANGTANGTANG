@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum CommonExceptionCode implements ExceptionCode {
+    NOT_FOUND("NOT_FOUND", "리소스를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     INTERNAL_SERVER_ERROR("SERVER_ERROR", "서버 오류", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 

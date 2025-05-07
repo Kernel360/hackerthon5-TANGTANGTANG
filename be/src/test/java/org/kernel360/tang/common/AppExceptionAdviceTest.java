@@ -64,6 +64,13 @@ public class AppExceptionAdviceTest {
                 .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()));
     }
 
+    @Test
+    @DisplayName("존재하지 않는 endpoint에 대해서 404 에러가 발생해야 한다")
+    void testUnknownEndpoint() throws Exception {
+        mvc.perform(get("/unknown-endpoint"))
+                .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+    }
+
     @RestController
     public static class TestController {
         @GetMapping("/test-app-warn")

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -11,6 +12,18 @@ public class AppExceptionAdvice {
     @ExceptionHandler
     public ResponseEntity<AppErrorResponse> handleAppException(AppException e) {
         var code = e.getCode();
+        var body = AppErrorResponse.from(code);
+
+        doLogging(code);
+
+        return ResponseEntity
+                .status(code.getHttpStatusCode())
+                .body(body);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<AppErrorResponse> handleNoHandlerFoundException(NoHandlerFoundException e) {
+        var code = CommonExceptionCode.NOT_FOUND;
         var body = AppErrorResponse.from(code);
 
         doLogging(code);

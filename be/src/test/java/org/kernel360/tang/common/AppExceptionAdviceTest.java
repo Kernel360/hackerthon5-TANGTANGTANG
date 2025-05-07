@@ -54,6 +54,13 @@ public class AppExceptionAdviceTest {
                 .andExpect(jsonPath("$.error.message").value("test exception"));
     }
 
+    @Test
+    @DisplayName("알 수 없는 예외 발생 시 500 에러가 발생해야 한다")
+    void testUnknownException() throws Exception {
+        mvc.perform(get("/test-internal"))
+                .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+    }
+
     @RestController
     public static class TestController {
         @GetMapping("/test")
@@ -82,6 +89,11 @@ public class AppExceptionAdviceTest {
             };
 
             throw new AppException(code);
+        }
+
+        @GetMapping("/test-internal")
+        public void testInternal() {
+            throw new RuntimeException("test exception");
         }
     }
 }

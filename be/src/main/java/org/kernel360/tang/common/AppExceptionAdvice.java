@@ -14,4 +14,13 @@ public class AppExceptionAdvice {
                 .status(code.getHttpStatusCode())
                 .body(body);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<AppErrorResponse> handleException(Exception e) {
+        var code = CommonExceptionCode.INTERNAL_SERVER_ERROR;
+        var body = AppErrorResponse.from(code);
+        return ResponseEntity
+                .status(code.getHttpStatusCode())
+                .body(body);
+    }
 }

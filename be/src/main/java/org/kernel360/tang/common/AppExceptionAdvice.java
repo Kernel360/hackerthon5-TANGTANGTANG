@@ -9,7 +9,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @Slf4j
 @RestControllerAdvice
 public class AppExceptionAdvice {
-    @ExceptionHandler
+    @ExceptionHandler(AppException.class)
     public ResponseEntity<AppErrorResponse> handleAppException(AppException e) {
         var code = e.getCode();
         var body = AppErrorResponse.from(code);
@@ -33,7 +33,7 @@ public class AppExceptionAdvice {
                 .body(body);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<AppErrorResponse> handleException(Exception e) {
         var code = CommonExceptionCode.INTERNAL_SERVER_ERROR;
         var body = AppErrorResponse.from(code);

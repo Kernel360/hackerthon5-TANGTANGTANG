@@ -14,4 +14,14 @@
     WHERE username = #{username}
   </select>
 
+  <!-- 아이디 중복 체크 -->
+  <select id="isMemberExist" resultType="int">
+      SELECT COUNT(*) FROM member WHERE username = #{userId}
+  </select>
+
+  <!-- 사용자 저장 -->
+  <insert id="saveUser" parameterType="org.kernel360.tang.auth.MemberDto" useGeneratedKeys="true" keyProperty="memberId">
+      INSERT INTO member (username, password)
+      VALUES (#{username}, #{password});
+  </insert>
 </mapper>

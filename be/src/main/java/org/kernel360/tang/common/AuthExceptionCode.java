@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum AuthExceptionCode implements ExceptionCode {
     INVALID_LOGIN("INVALID_LOGIN", "로그인 정보가 올바르지 않습니다.", HttpStatus.UNAUTHORIZED),
+    INVALID_AUTHORIZED("INVALID_AUTHORIZED", "인증 정보가 올바르지 않습니다.", HttpStatus.UNAUTHORIZED),
     ;
 
     public static final String PREFIX = "AUTH";

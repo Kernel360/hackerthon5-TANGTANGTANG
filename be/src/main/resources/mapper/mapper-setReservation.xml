@@ -16,6 +16,19 @@
         WHERE sr.member_id = #{memberId}
           AND sr.status = #{status}
     </select>
+    <select id="findAllByIdIn" resultType="org.kernel360.tang.seatReservation.vo.SeatReservationVo">
+        SELECT sr.resv_id,
+        sr.time_id,
+        sr.member_id,
+        sr.status,
+        sr.reserved_at
+        FROM seat_resv AS sr
+        WHERE sr.time_id IN (
+        <foreach item="item" index="index" collection="timeIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        )
+    </select>
 
     <insert id="reserveOneSeat"
             parameterType="org.kernel360.tang.seatReservation.vo.ReserveOneSeatVo"

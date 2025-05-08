@@ -9,6 +9,8 @@ import java.util.List;
 
 @Mapper
 public interface SeatReservationMapper {
+    List<SeatReservationVo> findAllByIdIn(List<Integer> timeIds);
+
     List<SeatReservationVo> findReservationOfMember(FindSeatReservation vo);
 
     void reserveOneSeat(ReserveOneSeatVo vo);

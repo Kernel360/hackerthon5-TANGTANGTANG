@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.kernel360.tang.common.AppException;
 import org.kernel360.tang.seatReservation.dto.SeatReservationRequest;
 import org.kernel360.tang.test.config.BaseIntegrationTest;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @MybatisTest
@@ -24,6 +26,10 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
     SeatReservationMapper seatReservationMapper;
 
     SeatReservationService seatReservationService;
+
+    final int VALID_TIME_ID = 6;
+
+    final int INVALID_TIME_ID = 1;
 
     @BeforeEach
     void setUp() {
@@ -70,7 +76,7 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
     void reserveSeats() {
         // given
         var memberId = 1;
-        var timeIds = List.of(1);
+        var timeIds = List.of(VALID_TIME_ID);
         var request = new SeatReservationRequest(timeIds);
 
         // when
@@ -84,7 +90,7 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
     void findReservationOfMemberAfterReserve() {
         // given
         var memberId = 1;
-        var timeIds = List.of(1);
+        var timeIds = List.of(VALID_TIME_ID);
         var request = new SeatReservationRequest(timeIds);
 
         // when
@@ -103,5 +109,19 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
         assertThat(diff.size()).isEqualTo(timeIds.size());
         assertThat(diff.get(0).getTimeId()).isNotNull();
         assertThat(after.size()).isEqualTo(before.size() + timeIds.size());
+    }
+
+    @Test
+    @DisplayName("단일 예약: 예약 가능 좌석이 아닐 경우 예약에 실패해야 한다.")
+    void reserveSeatsNotAvailable() {
+        // given
+        var memberId = 1;
+        var timeIds = List.of(INVALID_TIME_ID);
+        var request = new SeatReservationRequest(timeIds);
+
+        // when
+        assertThrows(AppException.class, () -> {
+            seatReservationService.reserveSeats(memberId, request);
+        });
     }
 }

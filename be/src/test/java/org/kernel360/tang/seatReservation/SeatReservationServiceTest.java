@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(SpringExtension.class)
@@ -37,6 +38,34 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("사용자의 예약 내역을 조회할 수 있어야 한다.")
+    void findReservationOfMember() {
+        // given
+        var memberId = 1;
+
+        // when
+        var res = seatReservationService.findReservationOfMember(memberId);
+
+        // then
+        assertThat(res).isNotNull();
+    }
+
+    @Test
+    @DisplayName("다른 사용자의 예약 내역을 조회할 수 있으면 안된다.")
+    void findReservationOfOtherMember() {
+        // given
+        var memberId = 2;
+
+        // when
+        var res = seatReservationService.findReservationOfMember(memberId);
+
+        // then
+        res.forEach((r) -> {
+            assertThat(r.getMemberId()).isEqualTo(memberId);
+        });
+    }
+
+    @Test
     @DisplayName("단일 예약: TimeId가 올바른 경우 예약에 성공해야 한다.")
     void reserveSeats() {
         // given
@@ -48,5 +77,31 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
         assertDoesNotThrow(() -> {
             seatReservationService.reserveSeats(memberId, request);
         });
+    }
+
+    @Test
+    @DisplayName("단일 예약: 예약에 성공한 경우 예약 내역을 조회할 수 있어야 한다.")
+    void findReservationOfMemberAfterReserve() {
+        // given
+        var memberId = 1;
+        var timeIds = List.of(1);
+        var request = new SeatReservationRequest(timeIds);
+
+        // when
+        var before = seatReservationService.findReservationOfMember(memberId);
+        seatReservationService.reserveSeats(memberId, request);
+        var after = seatReservationService.findReservationOfMember(memberId);
+
+        // then
+        // before에 없는 after 요소 찾기
+        var diff = after.stream()
+                .filter(a -> before.stream()
+                        .noneMatch(b -> b.getResvId() == a.getResvId())
+                )
+                .toList();
+
+        assertThat(diff.size()).isEqualTo(timeIds.size());
+        assertThat(diff.get(0).getTimeId()).isNotNull();
+        assertThat(after.size()).isEqualTo(before.size() + timeIds.size());
     }
 }

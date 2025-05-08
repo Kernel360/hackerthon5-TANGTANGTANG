@@ -48,6 +48,8 @@ CREATE TABLE seat_resv
 -- 데이터 삽입
 INSERT INTO member (username, password)
 VALUES ('user1', '{noop}1234');
+INSERT INTO member (username, password)
+VALUES ('user2', '{noop}1234');
 
 INSERT INTO room (name)
 VALUES ('회의실 A');
@@ -81,6 +83,6 @@ VALUES (2, 1, 1, '2024-09-30 09:30', NULL);
 INSERT INTO seat_resv (time_id, member_id, status, reserved_at, canceled_at)
 VALUES (3, 1, 1, '2024-09-30 10:00', NULL);
 INSERT INTO seat_resv (time_id, member_id, status, reserved_at, canceled_at)
-VALUES (4, 1, 1, '2024-09-30 10:30', NULL);
+VALUES (4, 1, 2, '2024-09-30 10:30', NULL);
 INSERT INTO seat_resv (time_id, member_id, status, reserved_at, canceled_at)
 VALUES (5, 1, 2, '2024-09-30 11:00', '2024-09-30 11:30');

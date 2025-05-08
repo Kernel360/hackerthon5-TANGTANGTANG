@@ -4,12 +4,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.kernel360.tang.common.Constants;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.time.LocalDate;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.HttpStatus;
@@ -59,10 +61,11 @@ public class SeatController {
 
     @GetMapping
     public ResponseEntity<List<SeatReservationResponse>> getUserReservations(
-            @ModelAttribute UserReservationGetRequest request
+            @ModelAttribute UserReservationGetRequest request,
+            @RequestAttribute(Constants.SESSION_MEMBER_ID) Integer memberId
     ) {
         List<SeatReservationDto> userReservations = seatService.getUserReservations(
-                1,  // todo: 인가 방식 정해진 후 변경
+                memberId,
                 request.status(),
                 request.startDate(),
                 request.endDate()

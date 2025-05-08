@@ -1,11 +1,11 @@
 package org.kernel360.tang.auth;
 
 import jakarta.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.kernel360.tang.auth.dto.LoginRequest;
 import org.kernel360.tang.auth.dto.LoginResponse;
+import org.kernel360.tang.common.AppErrorResponse;
+import org.kernel360.tang.common.AppException;
 import org.kernel360.tang.member.Member;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +28,8 @@ public class AuthController {
 
             LoginResponse loginResponse = new LoginResponse(member.getUsername());
             return ResponseEntity.ok(loginResponse);
-        } catch (RuntimeException e) {
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", e.getMessage());
-            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        } catch (AppException e) {
+            return new ResponseEntity<>(AppErrorResponse.from(e.getCode()), HttpStatus.UNAUTHORIZED);
         }
     }
 }

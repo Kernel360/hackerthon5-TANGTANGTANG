@@ -2,6 +2,8 @@ package org.kernel360.tang.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.kernel360.tang.auth.dto.LoginRequest;
+import org.kernel360.tang.common.AppException;
+import org.kernel360.tang.common.AuthExceptionCode;
 import org.kernel360.tang.member.Member;
 import org.kernel360.tang.member.MemberMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +18,7 @@ public class AuthService {
     public Member login(LoginRequest request) {
         Member member = memberMapper.selectMemberByUsername(request.getUsername());
         if (member == null || !passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            throw new RuntimeException("로그인 정보가 올바르지 않습니다.");
+            throw new AppException(AuthExceptionCode.INVALID_LOGIN);
         }
         return member;
     }

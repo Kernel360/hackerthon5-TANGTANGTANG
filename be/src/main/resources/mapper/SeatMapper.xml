@@ -2,6 +2,40 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.kernel360.tang.seat.SeatMapper">
 
+	<select id="getAvailableSeatByPeriod" resultType="org.kernel360.tang.seat.AvailableSeatDto">
+		SELECT
+			st.time_id AS timeId,
+			st.seat_id AS seatId,
+			st.start_dt AS startAt,
+			st.end_dt AS endAt
+		FROM seat_time st
+		WHERE st.start_dt >= #{startAt}
+			AND st.end_dt &lt;= #{endAt}
+			AND NOT EXISTS (
+				SELECT 1
+				FROM seat_resv sr
+				WHERE sr.time_id = st.time_id
+					AND sr.status = 1
+		)
+	</select>
+
+	<select id="getAvailableSeat" resultType="org.kernel360.tang.seat.AvailableSeatDto">
+		SELECT
+			st.time_id AS timeId,
+			st.seat_id AS seatId,
+			st.start_dt AS startAt,
+			st.end_dt AS endAt
+		FROM seat_time st
+		WHERE st.seat_id = #{seatId}
+			AND DATE(st.start_dt) = #{date}
+			AND NOT EXISTS (
+				SELECT 1
+				FROM seat_resv sr
+				WHERE sr.time_id = st.time_id
+				AND sr.status = 1
+			)
+	</select>
+
 	<select id="getUserReservations" resultType="org.kernel360.tang.seat.SeatReservationDto">
 		SELECT
 			sr.resv_id AS reservationId,
@@ -18,7 +52,7 @@
 				AND sr.status = #{status}
 			</if>
 			AND st.start_dt >= #{startDate}
-		  AND st.end_dt &lt;= #{endDate}
+			AND st.end_dt &lt;= #{endDate}
 	</select>
 
 </mapper>

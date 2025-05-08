@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum SeatExceptionCode implements ExceptionCode {
 
     INVALID_RESERVATION_TIME_RANGE("INVALID_RESERVATION_TIME_RANGE", "3개월 이상의 기간을 조회할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    INVALID_TIME_RANGE("INVALID_TIME_RANGE", "시작 시간은 종료 시간보다 이후일 수 없습니다.", HttpStatus.BAD_REQUEST),
+    EXCEEDS_MAX_SELECT_TIME("EXCEEDS_MAX_SELECT_TIME", "예약 가능 최대 시간(3시간)을 초과했습니다.", HttpStatus.BAD_REQUEST),
     ;
 
     public static final String PREFIX = "SEAT";

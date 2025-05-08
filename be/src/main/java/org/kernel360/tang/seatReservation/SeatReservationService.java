@@ -34,33 +34,30 @@ public class SeatReservationService {
     public void reserveSeats(Integer memberId, SeatReservationRequest request) {
         var now = timeProvider.now();
 
-        var times = seatTimeMapper.findAllByIdIn(request.timeIds());
-        validateTimeIds(request.timeIds());
-        validateTimeStartDt(times, now);
+        var seatTime = seatTimeMapper.findById(request.timeId());
+        validateTimeId(request.timeId());
+        validateTimeStartDt(seatTime, now);
 
         var vo = ReserveOneSeatVo.from(memberId, request, now);
         seatReservationMapper.reserveOneSeat(vo);
     }
 
-    private void validateTimeIds(List<Integer> timeIds) {
-        var res = seatReservationMapper.findAllByIdIn(timeIds)
-                .stream()
-                .filter((r) -> {
-                    var s = r.getStatus();
-                    return s == SeatReservationStatus.RESERVING || s == SeatReservationStatus.RESERVED;
-                })
-                .toList();
-        if (!res.isEmpty()) {
+    private void validateTimeId(Integer timeId) {
+        var invalidStatusList = List.of(
+                SeatReservationStatus.RESERVING,
+                SeatReservationStatus.RESERVED
+        );
+        var cnt = seatReservationMapper.countByTimeIdAndStatusIn(timeId, invalidStatusList);
+
+        if (cnt > 0) {
             throw new AppException(ReservationExceptionCode.RESERVATION_ALREADY_EXISTS);
         }
     }
 
-    private void validateTimeStartDt(List<SeatTimeVo> times, LocalDateTime now) {
-        for (var time : times) {
-            var startDt = time.getStartDt();
-            if (startDt.isAfter(now) && startDt.minus(Constants.RESERVATION_TIME_LIMIT).isBefore(now)) {
-                throw new AppException(ReservationExceptionCode.RESERVATION_VALID_START_TIME_PASSED);
-            }
+    private void validateTimeStartDt(SeatTimeVo seatTime, LocalDateTime now) {
+        var startDt = seatTime.getStartDt();
+        if (startDt.isAfter(now) && startDt.minus(Constants.RESERVATION_TIME_LIMIT).isBefore(now)) {
+            throw new AppException(ReservationExceptionCode.RESERVATION_VALID_START_TIME_PASSED);
         }
     }
 

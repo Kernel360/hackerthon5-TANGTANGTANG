@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -93,8 +92,8 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
     void reserveSeats() {
         // given
         var memberId = 1;
-        var timeIds = List.of(VALID_TIME_ID);
-        var request = new SeatReservationRequest(timeIds);
+        var timeId = VALID_TIME_ID;
+        var request = new SeatReservationRequest(timeId);
 
         // when
         assertDoesNotThrow(() -> {
@@ -107,8 +106,8 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
     void findReservationOfMemberAfterReserve() {
         // given
         var memberId = 1;
-        var timeIds = List.of(VALID_TIME_ID);
-        var request = new SeatReservationRequest(timeIds);
+        var timeId = VALID_TIME_ID;
+        var request = new SeatReservationRequest(timeId);
 
         // when
         var before = seatReservationService.findReservationOfMember(memberId);
@@ -123,9 +122,8 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
                 )
                 .toList();
 
-        assertThat(diff.size()).isEqualTo(timeIds.size());
         assertThat(diff.get(0).getTimeId()).isNotNull();
-        assertThat(after.size()).isEqualTo(before.size() + timeIds.size());
+        assertThat(after.size()).isEqualTo(before.size() + 1);
     }
 
     @Test
@@ -133,8 +131,8 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
     void reserveSeatsNotAvailable() {
         // given
         var memberId = 1;
-        var timeIds = List.of(INVALID_TIME_ID);
-        var request = new SeatReservationRequest(timeIds);
+        var timeId = INVALID_TIME_ID;
+        var request = new SeatReservationRequest(timeId);
 
         // when
         assertThrows(AppException.class, () -> {
@@ -148,7 +146,7 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
         // given
         var memberId = 1;
         var invalidTimeId = 7;
-        var req = new SeatReservationRequest(List.of(invalidTimeId));
+        var req = new SeatReservationRequest(invalidTimeId);
         var now = LocalDateTime.of(2024, 10, 1, 9, 55);
         Mockito.when(timeProvider.now()).thenReturn(now);
 

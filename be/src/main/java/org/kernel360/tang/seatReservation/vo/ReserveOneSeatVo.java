@@ -15,7 +15,7 @@ public class ReserveOneSeatVo {
 
     public static ReserveOneSeatVo from(Integer memberId, SeatReservationRequest request, LocalDateTime reservedAt) {
         return new ReserveOneSeatVo(
-                request.timeIds().get(0),
+                request.timeId(),
                 memberId,
                 SeatReservationStatus.RESERVED,
                 reservedAt

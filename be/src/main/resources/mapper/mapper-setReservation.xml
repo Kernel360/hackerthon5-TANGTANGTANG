@@ -16,7 +16,7 @@
         WHERE sr.member_id = #{memberId}
           AND sr.status = #{status}
     </select>
-    <select id="findAllByIdIn" resultType="org.kernel360.tang.seatReservation.vo.SeatReservationVo">
+    <select id="findById" resultType="org.kernel360.tang.seatReservation.vo.SeatReservationVo">
         SELECT sr.resv_id,
         sr.time_id,
         sr.member_id,
@@ -25,6 +25,19 @@
         FROM seat_resv AS sr
         WHERE sr.time_id IN (
         <foreach item="item" index="index" collection="timeIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        )
+    </select>
+    <select id="countByTimeIdAndStatusIn" resultType="java.lang.Integer">
+        SELECT
+        count(sr.resv_id)
+        FROM
+        seat_resv AS sr
+        WHERE
+        sr.time_id = #{timeId}
+        AND sr.status IN (
+        <foreach item="item" index="index" collection="status" separator=",">
             #{item}
         </foreach>
         )

@@ -10,8 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,8 +26,8 @@ class SeatReservationControllerTest extends BaseIntegrationTest {
     @DisplayName("단일 예약: TimeId가 올바른 경우 예약에 성공해야 한다.")
     void reserveSingleSeat() throws Exception {
         // given
-        var timeIds = List.of(1);
-        var request = new SeatReservationRequest(timeIds);
+        var timeId = 6;
+        var request = new SeatReservationRequest(timeId);
         var body = objectMapper.writeValueAsString(request);
 
         // when

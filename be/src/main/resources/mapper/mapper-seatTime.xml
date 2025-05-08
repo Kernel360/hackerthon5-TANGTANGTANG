@@ -8,13 +8,4 @@
         FROM seat_time
         WHERE time_id = #{id}
     </select>
-    <select id="findAllByIdIn" resultType="org.kernel360.tang.seatTime.vo.SeatTimeVo">
-        SELECT time_id, seat_id, start_dt, end_dt
-        FROM seat_time
-        WHERE time_id IN (
-        <foreach item="item" index="index" collection="timeIds" separator=",">
-            #{item}
-        </foreach>
-        )
-    </select>
 </mapper>

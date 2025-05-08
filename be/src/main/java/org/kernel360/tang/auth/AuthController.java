@@ -4,10 +4,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.kernel360.tang.auth.dto.LoginRequest;
 import org.kernel360.tang.auth.dto.LoginResponse;
-import org.kernel360.tang.common.AppErrorResponse;
-import org.kernel360.tang.common.AppException;
 import org.kernel360.tang.member.Member;
-import org.springframework.http.HttpStatus;
+import org.kernel360.tang.common.Constants;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +21,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpSession session) {
         Member member = authService.login(request);
-        session.setAttribute("memberId", member.getMemberId());
+        session.setAttribute(Constants.SESSION_MEMBER_ID, member.getMemberId());
 
         LoginResponse loginResponse = new LoginResponse(member.getUsername());
         return ResponseEntity.ok(loginResponse);

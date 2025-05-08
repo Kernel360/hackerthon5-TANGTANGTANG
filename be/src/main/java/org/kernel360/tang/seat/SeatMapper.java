@@ -11,4 +11,10 @@ public interface SeatMapper {
     List<AvailableSeatDto> getAvailableSeatByPeriod(LocalDateTime startAt, LocalDateTime endAt);
 
     List<AvailableSeatDto> getAvailableSeat(int seatId, LocalDate date);
+    List<SeatReservationDto> getUserReservations(
+            Integer memberId,
+            Integer status,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
 }

@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -53,5 +55,23 @@ public class SeatController {
                 .toList();
 
         return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<SeatReservationResponse>> getUserReservations(
+            @ModelAttribute UserReservationGetRequest request
+    ) {
+        List<SeatReservationDto> userReservations = seatService.getUserReservations(
+                1,  // todo: 인가 방식 정해진 후 변경
+                request.status(),
+                request.startDate(),
+                request.endDate()
+        );
+
+        List<SeatReservationResponse> response = userReservations.stream().map(SeatReservationResponse::from)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
     }
 }

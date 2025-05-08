@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class SeatService {
-
     private static final int MAX_SELECT_TIME_HOUR = 3;
+    public static final int MAX_RESERVATION_SELECT_TIME_DAY = 90;
 
     private final SeatMapper seatMapper;
 
@@ -38,6 +38,19 @@ public class SeatService {
                 .filter(entry -> isContinuous(entry.getValue(), startAt, endAt))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
+    }
+
+    List<SeatReservationDto> getUserReservations(
+            Integer memberId,
+            SeatReservationStatus status,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    ) {
+        if (Duration.between(startDate, endDate).toDays() > MAX_RESERVATION_SELECT_TIME_DAY) {
+            throw new AppException(SeatExceptionCode.INVALID_RESERVATION_TIME_RANGE);
+        }
+
+        return seatMapper.getUserReservations(memberId, status.getCode(), startDate, endDate);
     }
 
     private void validateTimeRange(LocalDateTime startAt, LocalDateTime endAt) {

@@ -36,4 +36,23 @@
 			)
 	</select>
 
+	<select id="getUserReservations" resultType="org.kernel360.tang.seat.SeatReservationDto">
+		SELECT
+			sr.resv_id AS reservationId,
+			sr.member_id AS memberId,
+			st.seat_id AS seatId,
+			st.start_dt AS startAt,
+			st.end_dt AS endAt,
+			sr.status AS statusCode,
+			sr.reserved_at AS reservedAt,
+			sr.canceled_at AS canceledAt
+		FROM seat_resv sr INNER JOIN seat_time st ON sr.time_id = st.time_id
+		WHERE sr.member_id = #{memberId}
+			<if test="status != null">
+				AND sr.status = #{status}
+			</if>
+			AND st.start_dt >= #{startDate}
+			AND st.end_dt &lt;= #{endDate}
+	</select>
+
 </mapper>

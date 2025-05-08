@@ -10,16 +10,6 @@ public record AvailableSeatDto(
 
         LocalDateTime startAt,
 
-        LocalDateTime endAt,
-
-        int statusCode,
-
-        LocalDateTime reservedAt,
-
-        LocalDateTime canceledAt
-
+        LocalDateTime endAt
 ) {
-    public SeatReservationStatus getStatus() {
-        return SeatReservationStatus.fromCode(statusCode);
-    }
 }

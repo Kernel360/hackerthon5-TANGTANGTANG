@@ -13,13 +13,7 @@ public record AvailableSeatResponse(
 
         LocalDateTime startAt,
 
-        LocalDateTime endAt,
-
-        SeatReservationStatus status,
-
-        LocalDateTime reservedAt,
-
-        LocalDateTime canceledAt
+        LocalDateTime endAt
 ) {
 
     public static AvailableSeatResponse from(AvailableSeatDto availableSeatDto) {
@@ -27,10 +21,7 @@ public record AvailableSeatResponse(
                 availableSeatDto.seatId(),
                 availableSeatDto.timeId(),
                 availableSeatDto.startAt(),
-                availableSeatDto.endAt(),
-                availableSeatDto.getStatus(),
-                availableSeatDto.canceledAt(),
-                availableSeatDto.reservedAt()
+                availableSeatDto.endAt()
         );
     }
 }

@@ -4,17 +4,19 @@
 
 	<select id="getAvailableSeat" resultType="org.kernel360.tang.seat.AvailableSeatDto">
 		SELECT
-		    st.time_id AS timeId,
-				st.seat_id AS seatId,
-				st.start_dt AS startAt,
-				st.end_dt AS endAt,
-				sr.status AS statusCode,
-				sr.reserved_at AS reservedAt,
-				sr.canceled_at AS canceledAt
+			st.time_id AS timeId,
+			st.seat_id AS seatId,
+			st.start_dt AS startAt,
+			st.end_dt AS endAt
 		FROM seat_time st
-		    LEFT JOIN seat_resv sr ON st.time_id = sr.time_id
 		WHERE st.seat_id = #{seatId}
-				AND DATE(st.start_dt) = #{date}
+			AND DATE(st.start_dt) = #{date}
+			AND NOT EXISTS (
+				SELECT 1
+				FROM seat_resv sr
+				WHERE sr.time_id = st.time_id
+				AND sr.status = 1
+			)
 	</select>
 
 </mapper>

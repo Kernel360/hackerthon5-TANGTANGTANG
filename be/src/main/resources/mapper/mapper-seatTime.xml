@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.kernel360.tang.seatTime.SeatTimeMapper">
+    <select id="findById" resultType="org.kernel360.tang.seatTime.vo.SeatTimeVo">
+        SELECT time_id, seat_id, start_dt, end_dt
+        FROM seat_time
+        WHERE time_id = #{id}
+    </select>
+    <select id="findAllByIdIn" resultType="org.kernel360.tang.seatTime.vo.SeatTimeVo">
+        SELECT time_id, seat_id, start_dt, end_dt
+        FROM seat_time
+        WHERE time_id IN (
+        <foreach item="item" index="index" collection="timeIds" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+</mapper>

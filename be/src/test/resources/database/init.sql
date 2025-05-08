@@ -77,6 +77,8 @@ INSERT INTO seat_time (seat_id, start_dt, end_dt)
 VALUES (5, '2024-10-01 10:00', '2024-10-01 11:00');
 INSERT INTO seat_time (seat_id, start_dt, end_dt)
 VALUES (1, '2024-10-01 10:00', '2024-10-01 11:00');
+INSERT INTO seat_time (seat_id, start_dt, end_dt)
+VALUES (3, '2024-10-01 10:00', '2024-10-01 11:00');
 
 INSERT INTO seat_resv (time_id, member_id, status, reserved_at, canceled_at)
 VALUES (1, 1, 1, '2024-09-30 09:00', NULL);

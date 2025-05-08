@@ -6,12 +6,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.kernel360.tang.common.AppException;
+import org.kernel360.tang.common.TimeProvider;
 import org.kernel360.tang.seatReservation.dto.SeatReservationRequest;
+import org.kernel360.tang.seatTime.SeatTimeMapper;
 import org.kernel360.tang.test.config.BaseIntegrationTest;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("[통합 테스트] 좌석 예약")
 class SeatReservationServiceTest extends BaseIntegrationTest {
     @Autowired
+    SeatTimeMapper seatTimeMapper;
+
+    @Autowired
     SeatReservationMapper seatReservationMapper;
+
+    @Mock
+    TimeProvider timeProvider;
 
     SeatReservationService seatReservationService;
 
@@ -33,13 +44,19 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        timeProvider = Mockito.mock(TimeProvider.class);
+        Mockito.when(timeProvider.now()).thenReturn(LocalDateTime.now());
+
         seatReservationService = new SeatReservationService(
+                timeProvider,
+                seatTimeMapper,
                 seatReservationMapper
         );
     }
 
     @AfterEach
     void tearDown() {
+        timeProvider = null;
         seatReservationService = null;
     }
 
@@ -122,6 +139,22 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
         // when
         assertThrows(AppException.class, () -> {
             seatReservationService.reserveSeats(memberId, request);
+        });
+    }
+
+    @Test
+    @DisplayName("단일 예약: 시작 시간 10분 이내에는 예약할 수 없다.")
+    void reserve_should_failed_before_start_time_threshold() {
+        // given
+        var memberId = 1;
+        var invalidTimeId = 7;
+        var req = new SeatReservationRequest(List.of(invalidTimeId));
+        var now = LocalDateTime.of(2024, 10, 1, 9, 55);
+        Mockito.when(timeProvider.now()).thenReturn(now);
+
+        // when
+        assertThrows(AppException.class, () -> {
+            seatReservationService.reserveSeats(memberId, req);
         });
     }
 }

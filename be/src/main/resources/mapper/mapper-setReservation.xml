@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.kernel360.tang.seatReservation.SeatReservationMapper">
+    <select id="findReservationOfMember"
+            parameterType="org.kernel360.tang.seatReservation.vo.FindSeatReservation"
+            resultType="org.kernel360.tang.seatReservation.vo.SeatReservationVo"
+    >
+        SELECT sr.resv_id,
+               sr.time_id,
+               sr.member_id,
+               sr.status,
+               sr.reserved_at
+        FROM seat_resv AS sr
+        WHERE sr.member_id = #{memberId}
+          AND sr.status = #{status}
+    </select>
+    <select id="findById" resultType="org.kernel360.tang.seatReservation.vo.SeatReservationVo">
+        SELECT sr.resv_id,
+        sr.time_id,
+        sr.member_id,
+        sr.status,
+        sr.reserved_at
+        FROM seat_resv AS sr
+        WHERE sr.time_id IN (
+        <foreach item="item" index="index" collection="timeIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        )
+    </select>
+    <select id="countByTimeIdAndStatusIn" resultType="java.lang.Integer">
+        SELECT
+        count(sr.resv_id)
+        FROM
+        seat_resv AS sr
+        WHERE
+        sr.time_id = #{timeId}
+        AND sr.status IN (
+        <foreach item="item" index="index" collection="status" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+
+    <insert id="reserveOneSeat"
+            parameterType="org.kernel360.tang.seatReservation.vo.ReserveOneSeatVo"
+    >
+        INSERT INTO seat_resv
+            (time_id, member_id, status, reserved_at)
+        VALUES (#{timeId}, #{memberId}, #{status}, #{reservedAt})
+    </insert>
+</mapper>

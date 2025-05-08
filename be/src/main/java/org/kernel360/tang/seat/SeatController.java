@@ -2,6 +2,7 @@ package org.kernel360.tang.seat;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -19,7 +20,7 @@ public class SeatController {
     private final SeatService seatService;
 
     @GetMapping("/available-times")
-    public ResponseEntity<List<AvailableSeatResponse>> getAvailableSeats(
+    public ResponseEntity<List<AvailableSeatIdResponse>> getAvailableSeats(
             @RequestParam("start_at")
             @DateTimeFormat(iso = ISO.DATE_TIME)
             LocalDateTime startAt,
@@ -28,9 +29,9 @@ public class SeatController {
             @DateTimeFormat(iso = ISO.DATE_TIME)
             LocalDateTime endAt
     ) {
-        List<AvailableSeatDto> availableSeatDtos = seatService.getAvailableSeat(startAt, endAt);
-        List<AvailableSeatResponse> responses = availableSeatDtos.stream()
-                .map(AvailableSeatResponse::from)
+        Set<Integer> seatIds = seatService.getAvailableSeatIds(startAt, endAt);
+        List<AvailableSeatIdResponse> responses = seatIds.stream()
+                .map(AvailableSeatIdResponse::of)
                 .toList();
 
         return ResponseEntity.ok(responses);

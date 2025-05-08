@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 
 public record AvailableSeatDto(
 
-        int seatId,
-
         int timeId,
+
+        int seatId,
 
         LocalDateTime startAt,
 

@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.kernel360.tang.common.AppException;
+import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +19,10 @@ public class SeatService {
     private static final int MAX_SELECT_TIME_HOUR = 3;
 
     private final SeatMapper seatMapper;
+
+    public List<AvailableSeatDto> getAvailableSeat(int seatId, LocalDate date) {
+        return seatMapper.getAvailableSeat(seatId, date);
+    }
 
     public Set<Integer> getAvailableSeatIds(LocalDateTime startAt, LocalDateTime endAt) {
         validateTimeRange(startAt, endAt);

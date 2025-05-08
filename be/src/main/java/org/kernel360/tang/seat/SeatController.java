@@ -8,6 +8,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import java.time.LocalDate;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +34,22 @@ public class SeatController {
         Set<Integer> seatIds = seatService.getAvailableSeatIds(startAt, endAt);
         List<AvailableSeatIdResponse> responses = seatIds.stream()
                 .map(AvailableSeatIdResponse::of)
+                .toList();
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{seatId}/available-times")
+    public ResponseEntity<List<AvailableSeatResponse>> getAvailableSeats(
+            @PathVariable int seatId,
+
+            @RequestParam("date")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date
+    ) {
+        List<AvailableSeatDto> availableSeatDtos = seatService.getAvailableSeat(seatId, date);
+        List<AvailableSeatResponse> responses = availableSeatDtos.stream()
+                .map(AvailableSeatResponse::from)
                 .toList();
 
         return ResponseEntity.ok(responses);

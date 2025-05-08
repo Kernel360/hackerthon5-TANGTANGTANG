@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.kernel360.tang.seat.SeatMapper">
+
+	<select id="getAvailableSeatByPeriod" resultType="org.kernel360.tang.seat.AvailableSeatDto">
+		SELECT
+			st.time_id AS timeId,
+			st.seat_id AS seatId,
+			st.start_dt AS startAt,
+			st.end_dt AS endAt
+		FROM seat_time st
+		WHERE st.start_dt >= #{startAt}
+			AND st.end_dt &lt;= #{endAt}
+			AND NOT EXISTS (
+				SELECT 1
+				FROM seat_resv sr
+				WHERE sr.time_id = st.time_id
+					AND sr.status = 1
+			)
+	</select>
+
+</mapper>

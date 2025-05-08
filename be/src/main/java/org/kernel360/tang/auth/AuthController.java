@@ -22,14 +22,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpSession session) {
-        try {
-            Member member = authService.login(request);
-            session.setAttribute("memberId", member.getMemberId());
+        Member member = authService.login(request);
+        session.setAttribute("memberId", member.getMemberId());
 
-            LoginResponse loginResponse = new LoginResponse(member.getUsername());
-            return ResponseEntity.ok(loginResponse);
-        } catch (AppException e) {
-            return new ResponseEntity<>(AppErrorResponse.from(e.getCode()), HttpStatus.UNAUTHORIZED);
-        }
+        LoginResponse loginResponse = new LoginResponse(member.getUsername());
+        return ResponseEntity.ok(loginResponse);
     }
 }

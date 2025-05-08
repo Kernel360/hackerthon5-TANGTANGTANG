@@ -5,22 +5,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.kernel360.tang.test.TestController;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@WebMvcTest(
+        controllers = {TestController.class},
+        useDefaultFilters = false
+)
 @ExtendWith({OutputCaptureExtension.class})
 public class AppExceptionAdviceTest {
     MockMvc mvc;
@@ -89,79 +90,5 @@ public class AppExceptionAdviceTest {
     void testUnknownEndpoint() throws Exception {
         mvc.perform(get("/unknown-endpoint"))
                 .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
-    }
-
-    @RestController
-    public static class TestController {
-        @GetMapping("/test-app-warn")
-        public void test() {
-            ExceptionCode code = new ExceptionCode() {
-
-                @Override
-                public String getPrefix() {
-                    return "TEST";
-                }
-
-                @Override
-                public String getCode() {
-                    return "001";
-                }
-
-                @Override
-                public String getMessage() {
-                    return "test exception";
-                }
-
-                @Override
-                public HttpStatusCode getHttpStatusCode() {
-                    return HttpStatus.BAD_REQUEST;
-                }
-
-                @Override
-                public LoggingLevel getLoggingLevel() {
-                    return LoggingLevel.APP_WARN;
-                }
-            };
-
-            throw new AppException(code);
-        }
-
-        @GetMapping("/test-app-error")
-        public void testWithLogging() {
-            ExceptionCode code = new ExceptionCode() {
-
-                @Override
-                public String getPrefix() {
-                    return "TEST";
-                }
-
-                @Override
-                public String getCode() {
-                    return "001";
-                }
-
-                @Override
-                public String getMessage() {
-                    return "test exception";
-                }
-
-                @Override
-                public HttpStatusCode getHttpStatusCode() {
-                    return HttpStatus.BAD_REQUEST;
-                }
-
-                @Override
-                public LoggingLevel getLoggingLevel() {
-                    return LoggingLevel.APP_ERROR;
-                }
-            };
-
-            throw new AppException(code);
-        }
-
-        @GetMapping("/test-internal")
-        public void testInternal() {
-            throw new RuntimeException("test exception");
-        }
     }
 }

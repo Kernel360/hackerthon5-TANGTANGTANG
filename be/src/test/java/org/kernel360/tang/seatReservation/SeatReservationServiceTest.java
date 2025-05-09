@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.kernel360.tang.common.AppException;
 import org.kernel360.tang.common.TimeProvider;
+import org.kernel360.tang.seatReservation.dto.MultipleSeatRangeReservationRequest;
 import org.kernel360.tang.seatReservation.dto.SeatReservationRequest;
 import org.kernel360.tang.seatTime.SeatTimeMapper;
 import org.kernel360.tang.test.config.BaseIntegrationTest;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -154,5 +156,30 @@ class SeatReservationServiceTest extends BaseIntegrationTest {
         assertThrows(AppException.class, () -> {
             seatReservationService.reserveSeats(memberId, req);
         });
+    }
+
+    @Test
+    @DisplayName("다중 예약: 좌석과 시간대를 지정하여 여러 좌석을 동시에 예약할 수 있어야 한다.")
+    void reserveMultiSeatRange() {
+        // given
+        var memberId = 1;
+        var startDt = LocalDateTime.of(2024, 10, 1, 10, 0);
+        var endDt = LocalDateTime.of(2024, 10, 1, 11, 0);
+        var items = List.of(
+                new MultipleSeatRangeReservationRequest.SeatTimeRangeItem(6, startDt, endDt),
+                new MultipleSeatRangeReservationRequest.SeatTimeRangeItem(7, startDt, endDt)
+        );
+
+        var request = new MultipleSeatRangeReservationRequest(items);
+
+        // when
+        var before = seatReservationService.findReservationOfMember(memberId);
+        assertDoesNotThrow(() -> {
+            seatReservationService.reserveMultiSeatRange(memberId, request);
+        });
+        var after = seatReservationService.findReservationOfMember(memberId);
+
+        // then
+        assertThat(after.size()).isGreaterThan(before.size());
     }
 }

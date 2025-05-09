@@ -3,6 +3,7 @@ package org.kernel360.tang.seatReservation;
 import lombok.RequiredArgsConstructor;
 import org.kernel360.tang.common.AppException;
 import org.kernel360.tang.common.TimeProvider;
+import org.kernel360.tang.seatReservation.dto.MultipleSeatRangeReservationRequest;
 import org.kernel360.tang.seatReservation.dto.SeatReservationRequest;
 import org.kernel360.tang.seatReservation.vo.FindSeatReservation;
 import org.kernel360.tang.seatReservation.vo.ReserveOneSeatVo;
@@ -10,6 +11,7 @@ import org.kernel360.tang.seatReservation.vo.SeatReservationVo;
 import org.kernel360.tang.seatTime.SeatTimeMapper;
 import org.kernel360.tang.seatTime.vo.SeatTimeVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -59,6 +61,38 @@ public class SeatReservationService {
         if (startDt.isAfter(now) && startDt.minus(Constants.RESERVATION_TIME_LIMIT).isBefore(now)) {
             throw new AppException(ReservationExceptionCode.RESERVATION_VALID_START_TIME_PASSED);
         }
+    }
+
+    @Transactional
+    public void reserveMultiSeatRange(Integer memberId, MultipleSeatRangeReservationRequest request) {
+        var now = timeProvider.now();
+
+        request.items().forEach((item) -> {
+            // seatId, startDt, endDt
+            // 각 seatId에 대해 startDt, endDt에 속한 모든 seatTime을 가져온다
+            var seatTimes = seatTimeMapper.findBySeatIdAndDateBetween(
+                    item.seatId(),
+                    item.startDt(),
+                    item.endDt()
+            );
+
+            // 각 seatTime에 대한 예약이 존재하는지 확인한다.
+            seatTimes.forEach((t) -> {
+                var cnt = seatReservationMapper.countByTimeIdAndStatusIn(
+                        t.getTimeId(),
+                        List.of(SeatReservationStatus.RESERVING, SeatReservationStatus.RESERVED)
+                );
+                if (cnt > 0) {
+                    throw new AppException(ReservationExceptionCode.RESERVATION_ALREADY_EXISTS);
+                }
+            });
+
+            // 각 seatTime에 대해 예약을 한다.
+            seatTimes.forEach((t) -> {
+                var vo = ReserveOneSeatVo.from(memberId, t.getTimeId(), now);
+                seatReservationMapper.reserveOneSeat(vo);
+            });
+        });
     }
 
     static class Constants {

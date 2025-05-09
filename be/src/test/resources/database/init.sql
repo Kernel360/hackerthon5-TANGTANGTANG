@@ -64,6 +64,10 @@ INSERT INTO seat (name, room_id)
 VALUES ('좌석 4', 1);
 INSERT INTO seat (name, room_id)
 VALUES ('좌석 5', 1);
+INSERT INTO seat (name, room_id)
+VALUES ('좌석 6', 1);
+INSERT INTO seat (name, room_id)
+VALUES ('좌석 7', 1);
 
 INSERT INTO seat_time (seat_id, start_dt, end_dt)
 VALUES (1, '2024-10-01 09:00', '2024-10-01 10:00');
@@ -79,6 +83,21 @@ INSERT INTO seat_time (seat_id, start_dt, end_dt)
 VALUES (1, '2024-10-01 10:00', '2024-10-01 11:00');
 INSERT INTO seat_time (seat_id, start_dt, end_dt)
 VALUES (3, '2024-10-01 10:00', '2024-10-01 11:00');
+
+INSERT INTO seat_time (seat_id, start_dt, end_dt)
+VALUES (6, '2024-10-01 09:00', '2024-10-01 09:30'),
+       (6, '2024-10-01 09:30', '2024-10-01 10:00'),
+       (6, '2024-10-01 10:00', '2024-10-01 10:30'),
+       (6, '2024-10-01 10:30', '2024-10-01 11:00'),
+       (6, '2024-10-01 11:00', '2024-10-01 11:30'),
+       (6, '2024-10-01 11:30', '2024-10-01 12:00');
+INSERT INTO seat_time (seat_id, start_dt, end_dt)
+VALUES (7, '2024-10-01 09:00', '2024-10-01 09:30'),
+       (7, '2024-10-01 09:30', '2024-10-01 10:00'),
+       (7, '2024-10-01 10:00', '2024-10-01 10:30'),
+       (7, '2024-10-01 10:30', '2024-10-01 11:00'),
+       (7, '2024-10-01 11:00', '2024-10-01 11:30'),
+       (7, '2024-10-01 11:30', '2024-10-01 12:00');
 
 INSERT INTO seat_resv (time_id, member_id, status, reserved_at, canceled_at)
 VALUES (1, 1, 1, '2024-09-30 09:00', NULL);

@@ -50,4 +50,8 @@
 
 ## 🧩 DB 설계 (ERD)
 
-![erd](./erd.png)
+![erd](./img/erd.png)
+
+## 아키텍처 다이어그램
+
+![architecture_diagram.png](./img/architecture_diagram.png)

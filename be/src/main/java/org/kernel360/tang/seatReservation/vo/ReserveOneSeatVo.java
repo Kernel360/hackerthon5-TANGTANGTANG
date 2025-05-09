@@ -21,4 +21,13 @@ public class ReserveOneSeatVo {
                 reservedAt
         );
     }
+
+    public static ReserveOneSeatVo from(Integer memberId, Integer timeId, LocalDateTime reservedAt) {
+        return new ReserveOneSeatVo(
+                timeId,
+                memberId,
+                SeatReservationStatus.RESERVED,
+                reservedAt
+        );
+    }
 }

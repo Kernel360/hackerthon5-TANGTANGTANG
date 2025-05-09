@@ -8,4 +8,11 @@
         FROM seat_time
         WHERE time_id = #{id}
     </select>
+    <select id="findBySeatIdAndDateBetween" resultType="org.kernel360.tang.seatTime.vo.SeatTimeVo">
+        SELECT time_id, seat_id, start_dt, end_dt
+        FROM seat_time
+        WHERE seat_id = #{seatId}
+          AND start_dt >= #{startDt}
+          AND #{endDt} > end_dt
+    </select>
 </mapper>
